@@ -4,30 +4,33 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"go-restful/config"
-	"log"
+	"go-restful/controller"
+	"go-restful/repository"
+	"go-restful/service"
+	"go-restful/util"
 	"net/http"
 )
-
 func main() {
 	fmt.Print("coconut restfull api")
 
 	config.GetEnv()
 	postgresSql, err := config.OpenConnectionPostgres()
-	if err != nil {
-		panic(err)
-	}
+	util.SendPanicIfError(err)
 
-	log.Print(postgresSql)
+	todoListRepository := repository.NewTodoListRepositoryImpl()
+	todoListService := service.NewTodoListServiceImpl(todoListRepository, postgresSql)
+	todoListController := controller.NewTodoListControllerImpl(todoListService)
 
 	router := httprouter.New()
 
+	router.POST("/api/v1/todolist/create", todoListController.CreateTodoList)
+	router.PUT("/api/v1/todolist/update", todoListController.UpdateTodoList)
+
 	server := http.Server{
-		Addr:    "localhost:3000",
-		Handler: router,
+			Addr:    "localhost:3000",
+			Handler: router,
 	}
 
 	errServer := server.ListenAndServe()
-	if errServer != nil {
-		panic(errServer)
-	}
+	util.SendPanicIfError(errServer)
 }

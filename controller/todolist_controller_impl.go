@@ -29,10 +29,13 @@ func (t todoListControllerImpl) CreateTodoList(writer http.ResponseWriter, reque
 }
 
 func (t todoListControllerImpl) UpdateTodoList(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	requestDTO := dto.TodoListRequestDTO{}
+	requestDTO := dto.UpdateTodoListRequestDTO{}
 	util.ReadFromRequestBody(request, &requestDTO)
 
-	t.TodoListService.UpdateTodoList(request.Context(), requestDTO)
+	// Mengambil ID dari parameter URL
+	requestDTO.ID = params.ByName("id")
 
-	util.WriteToResponseBody(writer, requestDTO)
+	responseDTO := t.TodoListService.UpdateTodoList(request.Context(), requestDTO)
+
+	util.WriteToResponseBody(writer, responseDTO)
 }

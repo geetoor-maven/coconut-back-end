@@ -56,22 +56,22 @@ func convertToResponseDTO(mstTodoList model.MstTodoList) dto.TodoListResponseDTO
 	}
 } 
 
-func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListRequest dto.TodoListRequestDTO) dto.TodoListResponseDTO {
+func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListRequest dto.UpdateTodoListRequestDTO) dto.TodoListResponseDTO {
 	tx, err := t.DB.Begin()
 	util.SendPanicIfError(err)
 
 	defer util.CommitOrRollback(tx)
 
 	todoList := model.MstTodoList{
-		ID:          uuid.New().String(),
-		Title:       todoListRequest.Title,
-		Description: todoListRequest.Description,
-		Status:      todoListRequest.Status,
-		CreatedAt:   time.Now(),
+			ID:          todoListRequest.ID, // Menggunakan ID dari request
+			Title:       todoListRequest.Title,
+			Description: todoListRequest.Description,
+			Status:      todoListRequest.Status,
+			UpdatedAt:   time.Now(), // Menambahkan timestamp update
 	}
 
-	updateTodoList, errSave := t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
-		util.SendPanicIfError(errSave)
+	updatedTodoList, errSave := t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
+	util.SendPanicIfError(errSave)
 
-		return convertToResponseDTO(updateTodoList)
+	return convertToResponseDTO(updatedTodoList)
 }

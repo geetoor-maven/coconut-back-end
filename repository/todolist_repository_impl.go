@@ -28,10 +28,9 @@ func (t *todoListRepositoryImpl) CreateTodoList(ctx context.Context, tx *sql.Tx,
 }
 
 func (t *todoListRepositoryImpl) UpdateTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) (model.MstTodoList, error) {
-
 	query := `UPDATE mst_todolist 
-				SET title = $1, description = $2, status = $3, updated_at = $4
-				WHERE id = $5`
+							SET title = $1, description = $2, status = $3, updated_at = $4
+							WHERE id = $5`
 
 	_, err := tx.ExecContext(ctx, query, todoList.Title, todoList.Description, todoList.Status, todoList.UpdatedAt, todoList.ID)
 	util.SendPanicIfError(err)

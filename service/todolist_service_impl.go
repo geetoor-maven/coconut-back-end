@@ -24,9 +24,9 @@ func NewTodoListServiceImpl(todoListRepository repository.TodoListRepository, DB
 }
 
 func (t *todoListServiceImpl) CreateTodoList(ctx context.Context, todoListRequest dto.TodoListRequestDTO) dto.TodoListResponseDTO {
-
 	tx, err := t.DB.Begin()
 	util.SendPanicIfError(err)
+	
 	defer util.CommitOrRollBack(tx)
 
 	todoList := model.MstTodoList{
@@ -50,4 +50,24 @@ func convertToResponseDTO(mstTodoList model.MstTodoList) dto.TodoListResponseDTO
 		Status:      mstTodoList.Status,
 		CreatedAt:   time.Now(),
 	}
+}
+
+func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListRequest dto.UpdateTodoListRequestDTO) dto.TodoListResponseDTO{
+	tx, err := t.DB.Begin()
+	util.SendPanicIfError(err)
+
+	defer util.CommitOrRollBack(tx)
+
+	todoList := model.MstTodoList{
+		ID : todoListRequest.ID,
+		Title: todoListRequest.Title,
+		Description: todoListRequest.Description,
+		Status: todoListRequest.Status,
+		UpdatedAt: time.Now(),
+	}
+
+	updatedTodoList, errSave := t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
+	util.SendPanicIfError(errSave)
+
+	return convertToResponseDTO(updatedTodoList)
 }

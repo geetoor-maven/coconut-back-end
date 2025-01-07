@@ -10,4 +10,5 @@ import (
 type TodoListService interface {
 	CreatedAtTodoList(ctx context.Context, todoListRequest dto.TodoListRequestDTO) dto.TodoListResponseDTO
 	UpdateTodoList(ctx context.Context, todoListRequest dto.UpdateTodoListRequestDTO) dto.TodoListResponseDTO
+	DeleteTodoList(ctx context.Context, todoListRequest dto.DeleteTodoListRequestDTO) dto.TodoListResponseDTO
 }

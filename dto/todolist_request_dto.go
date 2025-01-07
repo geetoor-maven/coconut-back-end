@@ -12,3 +12,7 @@ type UpdateTodoListRequestDTO struct {
 	Description string `json:"desc"`
 	Status      string `json:"status"`
 }
+
+type DeleteTodoListRequestDTO struct {
+	ID string `json:"-"`
+}

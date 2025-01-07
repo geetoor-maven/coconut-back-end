@@ -25,6 +25,7 @@ func main() {
 
 	router.POST("/api/v1/todolist/create", todoListController.CreateTodoList)
 	router.PUT("/api/v1/todolist/update/:id", todoListController.UpdateTodoList)
+	router.DELETE("/api/v1/todolist/delete/:id", todoListController.DeleteTodoList)
 
 
 	server := http.Server{

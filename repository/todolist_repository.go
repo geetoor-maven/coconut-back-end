@@ -9,4 +9,6 @@ import (
 type TodoListRepository interface {
 	CreateTodoList (ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) (model.MstTodoList, error)
 	UpdateTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) (model.MstTodoList, error)
+	DeleteTodoList(ctx context.Context, tx *sql.Tx, todoList model.MstTodoList) (model.MstTodoList, error)
+	FindTodoListByID(ctx context.Context, tx *sql.Tx, id string) (model.MstTodoList, error) 
 }

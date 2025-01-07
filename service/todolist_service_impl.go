@@ -62,16 +62,42 @@ func (t *todoListServiceImpl) UpdateTodoList(ctx context.Context, todoListReques
 
 	defer util.CommitOrRollback(tx)
 
+	// Cek apakah ID ada di database
+	existingTodoList, err := t.TodoListRepository.FindTodoListByID(ctx, tx, todoListRequest.ID)
+	util.SendPanicIfError(err)
+
+	// Jika ID tidak ditemukan
+	if existingTodoList.ID == "" {
+		panic("ID not found")
+	}
+
+	// Jika ID ditemukan, lakukan update
 	todoList := model.MstTodoList{
-			ID:          todoListRequest.ID, // Menggunakan ID dari request
-			Title:       todoListRequest.Title,
-			Description: todoListRequest.Description,
-			Status:      todoListRequest.Status,
-			UpdatedAt:   time.Now(), // Menambahkan timestamp update
+		ID:          todoListRequest.ID,
+		Title:       todoListRequest.Title,
+		Description: todoListRequest.Description,
+		Status:      todoListRequest.Status,
+		UpdatedAt:   time.Now(),
 	}
 
 	updatedTodoList, errSave := t.TodoListRepository.UpdateTodoList(ctx, tx, todoList)
 	util.SendPanicIfError(errSave)
 
 	return convertToResponseDTO(updatedTodoList)
+}
+
+func (t *todoListServiceImpl) DeleteTodoList(ctx context.Context, todoListRequest dto.DeleteTodoListRequestDTO) dto.TodoListResponseDTO {
+	tx, err := t.DB.Begin()
+	util.SendPanicIfError(err)
+
+	defer util.CommitOrRollback(tx)
+
+	todoList := model.MstTodoList{
+			ID: todoListRequest.ID,
+	}
+
+	deletedTodoList, errSave := t.TodoListRepository.DeleteTodoList(ctx, tx, todoList)
+	util.SendPanicIfError(errSave)
+
+	return convertToResponseDTO(deletedTodoList)
 }

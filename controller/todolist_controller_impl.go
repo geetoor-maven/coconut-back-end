@@ -35,7 +35,25 @@ func (t todoListControllerImpl) UpdateTodoList(writer http.ResponseWriter, reque
 	// Mengambil ID dari parameter URL
 	requestDTO.ID = params.ByName("id")
 
+	defer func() {
+		if err := recover(); err != nil {
+			writer.WriteHeader(http.StatusNotFound)
+			util.WriteToResponseBody(writer, map[string]string{"error": "ID not found"})
+		}
+	}()
+
 	responseDTO := t.TodoListService.UpdateTodoList(request.Context(), requestDTO)
+	util.WriteToResponseBody(writer, responseDTO)
+}
+
+func (t todoListControllerImpl) DeleteTodoList(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	requestDTO := dto.DeleteTodoListRequestDTO{}
+	util.ReadFromRequestBody(request, &requestDTO)
+
+	// Mengambil ID dari parameter URL
+	requestDTO.ID = params.ByName("id")
+
+	responseDTO := t.TodoListService.DeleteTodoList(request.Context(), requestDTO)
 
 	util.WriteToResponseBody(writer, responseDTO)
 }
